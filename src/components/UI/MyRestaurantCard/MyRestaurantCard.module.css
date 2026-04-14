@@ -1,0 +1,17 @@
+.restaurantImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.restaurantInfo {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurantInfo > button {
+  margin-top: auto;
+}
