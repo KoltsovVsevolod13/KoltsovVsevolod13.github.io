@@ -9,7 +9,7 @@ export const initialRestaurants = {
     menu: [
       { id: 101, category: 'pizza', name: "Маргарита", desc: "Томатный соус, моцарелла, свежий базилик", price: 450, image: "https://the-cafe.ru/wp-content/uploads/2020/11/147c3814bbb34a77afdbc66e9ef20ed7_584x584.jpeg" },
       { id: 102, category: 'pizza', name: "Пепперони", desc: "Острая колбаса пепперони, моцарелла", price: 520, image: "https://tashirpizza.ru/images/products/334-1473.png" },
-      { id: 103, category: 'pizza', name: "Четыре сыра", desc: "Моцарелла, пармезан, горгонзола, чеддер", price: 580, image: "https://roll-club.od.ua/wp-content/uploads/2023/12/5-900x600.jpg" },
+      { id: 103, category: 'pizza', name: "Четыре сыра", desc: "Моцарелла, пармезан, горгонзола, чеддер", price: 580, image: "https://static.pizzasushiwok.ru/images/menu_new/2108-1300.jpg" },
       { id: 104, category: 'pizza', name: "Гавайская", desc: "Курица, ананас, моцарелла", price: 490, image: "https://europapizza.ru/image/cache/catalog/PIZZA/KARAMELNIJANANAS-840x840.webp" },
       { id: 105, category: 'pizza', name: "Мясная", desc: "Говядина, бекон, колбаса, моцарелла", price: 620, image: "https://lavera-pizza.ru/wp-content/uploads/2019/09/vid-sverhu1.jpg" },
       { id: 201, category: 'snacks', name: "Куриные крылышки", desc: "8 шт с соусом барбекю", price: 390, image: "https://www.rp.ru/img/eq/iterma/koptilni/krylo.jpg" },

@@ -1,6 +1,5 @@
 import { initialRestaurants } from '../data/initialData';
 
-// Пользователь
 export const getCurrentUser = () => {
   const user = localStorage.getItem('user');
   return user ? JSON.parse(user) : null;
@@ -14,7 +13,6 @@ export const removeCurrentUser = () => {
   localStorage.removeItem('user');
 };
 
-// Корзина
 export const getCart = () => {
   const cart = localStorage.getItem('cart');
   return cart ? JSON.parse(cart) : [];
@@ -57,7 +55,6 @@ export const removeFromCart = (id) => {
   return updatedCart;
 };
 
-// Рестораны
 export const getRestaurants = () => {
   let saved = localStorage.getItem('restaurants');
   
@@ -73,7 +70,6 @@ export const saveRestaurants = (restaurants) => {
   localStorage.setItem('restaurants', JSON.stringify(restaurants));
 };
 
-// Пользователи
 export const getUsers = () => {
   const users = localStorage.getItem('users');
   return users ? JSON.parse(users) : [];
