@@ -61,11 +61,36 @@ export const AuthProvider = ({ children }) => {
     return userToSave;
   };
 
+  const updateUser = (newData) => {
+    if (!user) return;
+
+    const updatedUser = { ...user, ...newData };
+
+    if (newData.email && newData.email.toLowerCase() !== user.email.toLowerCase()) {
+      const users = getUsers();
+      const emailExists = users.some(u => 
+        u.id !== user.id && u.email.toLowerCase() === newData.email.toLowerCase()
+      );
+      if (emailExists) throw new Error('Пользователь с таким email уже существует');
+    }
+
+    const users = getUsers();
+    const index = users.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      users[index] = updatedUser;
+      saveUsers(users);
+    }
+
+    setCurrentUser(updatedUser);
+    setUser(updatedUser);
+  };
+
   const value = {
     user,
     login,
     logout,
     register,
+    updateUser,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin'
   };

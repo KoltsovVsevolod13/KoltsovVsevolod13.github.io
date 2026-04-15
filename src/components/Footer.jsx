@@ -25,7 +25,7 @@ export default function Footer() {
 
         <div>
           <h4>Мы в соцсетях</h4>
-          <p>Instagram • VK • Telegram</p>
+          <p>Max • VK • Telegram</p>
         </div>
       </div>
 
