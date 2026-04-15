@@ -39,7 +39,7 @@ export default function Home() {
     <div>
       <section className="hero">
         <div className="hero-content">
-          <h1>Доставка еды по Санкт-Петербургу</h1>
+          <h1>Доставка1 еды по Санкт-Петербургу</h1>
           <p>Заказывай любимую еду из лучших ресторанов города</p>
           <button 
             className="hero-button" 
