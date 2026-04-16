@@ -112,10 +112,6 @@ export default function Login() {
         <p style={{ marginTop: '20px', textAlign: 'center' }}>
           Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
         </p>
-
-        <p style={{ fontSize: '14px', color: '#666', marginTop: '15px', textAlign: 'center' }}>
-          Для админа: admin@food.ru / любой пароль
-        </p>
       </div>
     </div>
   );
