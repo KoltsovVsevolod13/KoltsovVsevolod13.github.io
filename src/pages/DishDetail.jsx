@@ -4,6 +4,7 @@ import MyButton from '../components/UI/MyButton/MyButton';
 import { getRestaurants } from '../utils/storage';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import NotFound from './NotFound';
 
 export default function DishDetail() {
   const { restaurantId, dishId } = useParams();
@@ -32,12 +33,7 @@ export default function DishDetail() {
   };
 
   if (!dish || !restaurant) {
-    return (
-      <div className="not-found">
-        <h2>Блюдо не найдено</h2>
-        <MyButton variant="outline" onClick={() => navigate('/')}>Назад</MyButton>
-      </div>
-    );
+    return <NotFound />;
   }
 
   return (

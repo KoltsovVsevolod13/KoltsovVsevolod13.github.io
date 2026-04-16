@@ -5,6 +5,7 @@ import CategoryFilter from '../components/CategoryFilter';
 import DishList from '../components/DishList';
 import { getRestaurants } from '../utils/storage';
 import { getCategoryLabel } from '../utils/categories';
+import NotFound from './NotFound';
 
 export default function Restaurant() {
   const { id } = useParams();
@@ -20,17 +21,12 @@ export default function Restaurant() {
     if (foundRestaurant) {
       setRestaurant(foundRestaurant);
     } else {
-      navigate('/');
+      return;
     }
   }, [id, navigate]);
 
   if (!restaurant) {
-    return (
-      <div style={{ padding: '80px', textAlign: 'center' }}>
-        <h2>Ресторан не найден</h2>
-        <MyButton variant="outline" onClick={() => navigate('/')}>Назад</MyButton>
-      </div>
-    );
+    return <NotFound />;
   }
 
   const filteredMenu = activeCategory
