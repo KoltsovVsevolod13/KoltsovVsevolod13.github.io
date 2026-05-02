@@ -1,0 +1,81 @@
+<script setup>
+import { ref } from 'vue'
+
+const items = ref([
+  { icon: '🏠', label: 'Главная' },
+  { icon: '🔥', label: 'В тренде' },
+  { icon: '📺', label: 'Подписки' },
+  { icon: '🎵', label: 'Музыка' },
+  { icon: '🎮', label: 'Игры' },
+  { icon: '🏆', label: 'Спорт' },
+  { icon: '📰', label: 'Новости' },
+  { icon: '🎬', label: 'Фильмы' },
+  { icon: '📚', label: 'Образование' },
+  { icon: '🕒', label: 'История' },
+  { icon: '👍', label: 'Понравившиеся' },
+])
+
+const active = ref('Главная')
+
+function onClick(label) {
+  active.value = label
+}
+</script>
+
+<template>
+  <aside class="sidebar">
+    <button
+      v-for="i in items"
+      class="item"
+      :class="{ active: active === i.label }"
+      @click="onClick(i.label)"
+    >
+      <span class="icon">{{ i.icon }}</span>
+      <span class="label">{{ i.label }}</span>
+    </button>
+  </aside>
+</template>
+
+<style scoped>
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg);
+  padding: 12px 0;
+  border-right: 1px solid var(--border);
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  position: sticky;
+  top: 56px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 0 24px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+}
+
+.item:hover {
+  background: var(--hover);
+}
+
+.item.active {
+  background: var(--hover);
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+</style>
