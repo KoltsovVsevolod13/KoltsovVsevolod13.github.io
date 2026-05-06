@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth.js'
 
@@ -7,6 +7,13 @@ const router = useRouter()
 const { currentUser, logout } = useAuth()
 
 const search = ref('')
+
+const avatarColor = computed(() => {
+  if (!currentUser.value) return '#ff5722'
+  const colors = ['#ff0000', '#00bfff', '#32cd32', '#ff8c00', '#8a2be2', '#ff1493']
+  const hash = currentUser.value.email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return colors[hash % colors.length]
+})
 
 function goToLogin() {
   router.push('/login')
@@ -16,8 +23,13 @@ function goToRegister() {
   router.push('/register')
 }
 
-function handleAvatarClick() {
-  console.log('Клик по аватарке — переход в профиль (пока не сделан)')
+function goToProfile() {
+  router.push('/profile')
+}
+
+function logoutUser() {
+  logout()
+  router.push('/login')
 }
 </script>
 
@@ -50,7 +62,7 @@ function handleAvatarClick() {
 
       <template v-else>
         <button class="icon-btn">＋</button>
-        <button class="avatar-btn" @click="handleAvatarClick">
+        <button class="avatar-btn" @click="goToProfile" title="Профиль" :style="{ backgroundColor: avatarColor }">
           {{ currentUser.email[0].toUpperCase() }}
         </button>
       </template>
@@ -189,7 +201,6 @@ function handleAvatarClick() {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #ff5722;
   color: white;
   border: none;
   cursor: pointer;
@@ -198,5 +209,10 @@ function handleAvatarClick() {
   align-items: center;
   justify-content: center;
   font-size: 15px;
+  transition: transform 0.2s;
+}
+
+.avatar-btn:hover {
+  transform: scale(1.08);
 }
 </style>

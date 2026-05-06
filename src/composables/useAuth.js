@@ -36,17 +36,29 @@ export function useAuth() {
   }
 
   function register(email, password) {
-    if (users.value.some(u => u.email === email)) {
-      return false
-    }
+    if (users.value.some(u => u.email === email)) return false
 
     const newUser = {
       id: Date.now(),
-      email: email,
-      password: password
+      email,
+      password,
+      name: email.split('@')[0]
     }
 
     users.value.push(newUser)
+    saveToStorage()
+    return true
+  }
+
+  function updateUser(newData) {
+    if (!currentUser.value) return false
+
+    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
+    if (userIndex === -1) return false
+
+    users.value[userIndex] = { ...users.value[userIndex], ...newData }
+    currentUser.value = users.value[userIndex]
+
     saveToStorage()
     return true
   }
@@ -60,6 +72,7 @@ export function useAuth() {
     login,
     register,
     logout,
+    updateUser,
     currentUser
   }
 }
