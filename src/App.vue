@@ -3,21 +3,30 @@ import TheHeader from './components/TheHeader.vue'
 import TheSidebar from './components/TheSidebar.vue'
 import TheChips from './components/TheChips.vue'
 import VideoCard from './components/VideoCard.vue'
+
 import { useVideos } from './composables/useVideos.js'
+import { useAuth } from './composables/useAuth.js'
+import { useRouter, RouterView } from 'vue-router'
 
 const { videos } = useVideos()
+const { currentUser } = useAuth()
+const router = useRouter()
 </script>
 
 <template>
   <div class="app">
     <TheHeader />
-    <div class="layout">
+
+    <RouterView v-if="['/login', '/register'].includes(router.currentRoute.value.path)" />
+
+    <div v-else class="layout">
       <TheSidebar />
       <main class="content">
         <TheChips />
         <div class="grid">
           <VideoCard
             v-for="v in videos"
+            :key="v.id"
             :title="v.title"
           />
         </div>

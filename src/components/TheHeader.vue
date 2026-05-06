@@ -1,14 +1,31 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../composables/useAuth.js'
+
+const router = useRouter()
+const { currentUser, logout } = useAuth()
 
 const search = ref('')
+
+function goToLogin() {
+  router.push('/login')
+}
+
+function goToRegister() {
+  router.push('/register')
+}
+
+function handleAvatarClick() {
+  console.log('Клик по аватарке — переход в профиль (пока не сделан)')
+}
 </script>
 
 <template>
   <header class="header">
     <div class="left">
       <button class="icon-btn">☰</button>
-      <a class="logo" href="#">
+      <a class="logo" href="/">
         <span class="logo-icon">▶</span>
         <span class="logo-text">Videohosting</span>
       </a>
@@ -26,8 +43,17 @@ const search = ref('')
     </div>
 
     <div class="right">
-      <button class="icon-btn">＋</button>
-      <button class="avatar-btn">К</button>
+      <template v-if="!currentUser">
+        <button class="auth-link" @click="goToRegister">Создать аккаунт</button>
+        <button class="auth-link login-btn" @click="goToLogin">Войти</button>
+      </template>
+
+      <template v-else>
+        <button class="icon-btn">＋</button>
+        <button class="avatar-btn" @click="handleAvatarClick">
+          {{ currentUser.email[0].toUpperCase() }}
+        </button>
+      </template>
     </div>
   </header>
 </template>
@@ -46,8 +72,7 @@ const search = ref('')
   z-index: 10;
 }
 
-.left,
-.right {
+.left, .right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -64,11 +89,12 @@ const search = ref('')
   display: flex;
   align-items: center;
   gap: 4px;
+  text-decoration: none;
 }
 
 .logo-icon {
   color: var(--red);
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .logo-text {
@@ -118,7 +144,6 @@ const search = ref('')
   border-radius: 0 20px 20px 0;
   color: var(--fg);
   cursor: pointer;
-  font-size: 16px;
 }
 
 .search-btn:hover {
@@ -134,11 +159,30 @@ const search = ref('')
   border-radius: 50%;
   color: var(--fg);
   cursor: pointer;
-  font-size: 16px;
 }
 
-.mic-btn:hover {
+.auth-link {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.auth-link:hover {
   background: var(--hover);
+}
+
+.login-btn {
+  background: var(--red);
+  color: white;
+  border: none;
+}
+
+.login-btn:hover {
+  background: #cc0000;
 }
 
 .avatar-btn {
@@ -146,10 +190,13 @@ const search = ref('')
   height: 32px;
   border-radius: 50%;
   background: #ff5722;
-  color: #fff;
+  color: white;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
 }
 </style>
