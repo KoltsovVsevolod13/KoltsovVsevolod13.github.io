@@ -7,15 +7,15 @@ const props = defineProps({
 
 const items = ref([
   { icon: '🏠', label: 'Главная' },
-  { icon: '🔥', label: 'В тренде' },
-  { icon: '📺', label: 'Подписки' },
   { icon: '🎵', label: 'Музыка' },
   { icon: '🎮', label: 'Игры' },
-  { icon: '🏆', label: 'Спорт' },
-  { icon: '📰', label: 'Новости' },
-  { icon: '🎬', label: 'Фильмы' },
   { icon: '📚', label: 'Образование' },
-  { icon: '🕒', label: 'История' },
+  { icon: '🍳', label: 'Кулинария' },
+  { icon: '🏞️', label: 'Путешествия' },
+  { icon: '💪', label: 'Здоровье' },
+  { icon: '📸', label: 'Фото и видео' },
+  { icon: '🐱', label: 'Животные' },
+  { icon: '🧠', label: 'Наука' }
 ])
 
 const active = ref('Главная')
