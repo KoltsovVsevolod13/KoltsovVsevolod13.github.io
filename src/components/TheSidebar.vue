@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 
+const props = defineProps({
+  isOpen: Boolean
+})
+
 const items = ref([
   { icon: '🏠', label: 'Главная' },
   { icon: '🔥', label: 'В тренде' },
@@ -12,7 +16,6 @@ const items = ref([
   { icon: '🎬', label: 'Фильмы' },
   { icon: '📚', label: 'Образование' },
   { icon: '🕒', label: 'История' },
-  { icon: '👍', label: 'Понравившиеся' },
 ])
 
 const active = ref('Главная')
@@ -23,7 +26,7 @@ function onClick(label) {
 </script>
 
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" :class="{ open: isOpen }">
     <button
       v-for="i in items"
       class="item"
@@ -38,15 +41,21 @@ function onClick(label) {
 
 <style scoped>
 .sidebar {
-  width: 240px;
-  flex-shrink: 0;
+  width: 280px;
   background: var(--bg);
-  padding: 12px 0;
   border-right: 1px solid var(--border);
   height: calc(100vh - 56px);
   overflow-y: auto;
-  position: sticky;
+  position: fixed;
   top: 56px;
+  left: -280px;
+  z-index: 200;
+  padding: 12px 0;
+  transition: left 0.3s ease;
+}
+
+.sidebar.open {
+  left: 0;
 }
 
 .item {

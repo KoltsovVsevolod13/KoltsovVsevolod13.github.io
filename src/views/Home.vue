@@ -1,6 +1,5 @@
 <script setup>
 import TheSidebar from '../components/TheSidebar.vue'
-import TheChips from '../components/TheChips.vue'
 import VideoCard from '../components/VideoCard.vue'
 import { useVideos } from '../composables/useVideos.js'
 
@@ -9,10 +8,7 @@ const { videos } = useVideos()
 
 <template>
   <div class="layout">
-    <TheSidebar />
     <main class="content">
-      <TheChips />
-      
       <div v-if="videos.length === 0" class="empty-state">
         <p>Пока нет видео</p>
       </div>

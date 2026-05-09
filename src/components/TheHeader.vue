@@ -7,6 +7,7 @@ const router = useRouter()
 const { currentUser, logout } = useAuth()
 
 const search = ref('')
+const emit = defineEmits(['toggle-sidebar'])
 
 const avatarColor = computed(() => {
   if (!currentUser.value) return '#ff5722'
@@ -31,12 +32,16 @@ function logoutUser() {
   logout()
   router.push('/login')
 }
+
+function toggleSidebar() {
+  emit('toggle-sidebar')
+}
 </script>
 
 <template>
   <header class="header">
     <div class="left">
-      <button class="icon-btn">☰</button>
+      <button class="icon-btn" @click="toggleSidebar">☰</button>
       <a class="logo" href="/">
         <span class="logo-icon">▶</span>
         <span class="logo-text">Videohosting</span>
@@ -80,7 +85,7 @@ function logoutUser() {
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .left, .right {
