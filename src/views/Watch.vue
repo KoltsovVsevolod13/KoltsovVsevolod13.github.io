@@ -2,22 +2,33 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useVideos } from '../composables/useVideos.js'
+import { useAuth } from '../composables/useAuth.js'
 
 const route = useRoute()
 const router = useRouter()
 
-const { getVideoById } = useVideos()
+const { getVideoById, incrementViews } = useVideos()
+const { currentUser, addToWatched } = useAuth()
 
 const video = ref(null)
 const loading = ref(true)
 
 function loadVideo() {
   const foundVideo = getVideoById(route.params.id)
+  
   if (foundVideo) {
     video.value = foundVideo
+
+    if (currentUser.value) {
+      const wasAdded = addToWatched(route.params.id)
+      if (wasAdded) {
+        incrementViews(route.params.id)
+      }
+    }
   } else {
     router.push('/')
   }
+  
   loading.value = false
 }
 

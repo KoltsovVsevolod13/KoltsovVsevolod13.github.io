@@ -42,7 +42,8 @@ export function useAuth() {
       id: Date.now(),
       email,
       password,
-      name: email.split('@')[0]
+      name: email.split('@')[0],
+      watched: []
     }
 
     users.value.push(newUser)
@@ -63,6 +64,24 @@ export function useAuth() {
     return true
   }
 
+  function addToWatched(videoId) {
+    if (!currentUser.value) return false
+
+    const videoIdNum = Number(videoId)
+    
+    currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
+
+    currentUser.value.watched.push(videoIdNum)
+
+    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
+    if (userIndex !== -1) {
+      users.value[userIndex].watched = [...currentUser.value.watched]
+    }
+
+    saveToStorage()
+    return true
+  }
+
   function logout() {
     currentUser.value = null
     saveToStorage()
@@ -73,6 +92,7 @@ export function useAuth() {
     register,
     logout,
     updateUser,
+    addToWatched,
     currentUser
   }
 }

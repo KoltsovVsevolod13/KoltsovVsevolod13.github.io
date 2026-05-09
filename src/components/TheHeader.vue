@@ -51,7 +51,6 @@ function logoutUser() {
         placeholder="Поиск"
       />
       <button class="search-btn">🔍</button>
-      <button class="mic-btn">🎤</button>
     </div>
 
     <div class="right">
@@ -160,17 +159,6 @@ function logoutUser() {
 
 .search-btn:hover {
   background: var(--hover);
-}
-
-.mic-btn {
-  width: 40px;
-  height: 40px;
-  margin-left: 8px;
-  background: var(--bg-2);
-  border: none;
-  border-radius: 50%;
-  color: var(--fg);
-  cursor: pointer;
 }
 
 .auth-link {

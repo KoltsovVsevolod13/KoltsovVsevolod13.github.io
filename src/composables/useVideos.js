@@ -79,9 +79,17 @@ function getVideoById(id) {
   return videos.value.find(v => v.id === Number(id))
 }
 
+function incrementViews(id) {
+  const video = getVideoById(id)
+  if (video) {
+    video.views += 1
+  }
+}
+
 export function useVideos() {
   return {
     videos,
-    getVideoById
+    getVideoById,
+    incrementViews
   }
 }
