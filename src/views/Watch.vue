@@ -7,8 +7,8 @@ import { useAuth } from '../composables/useAuth.js'
 const route = useRoute()
 const router = useRouter()
 
-const { getVideoById, incrementViews } = useVideos()
-const { currentUser, addToWatched } = useAuth()
+const { getVideoById, incrementViews, toggleLike } = useVideos()
+const { currentUser, addToWatched, hasLiked, toggleLike: toggleUserLike } = useAuth()
 
 const video = ref(null)
 const loading = ref(true)
@@ -30,6 +30,21 @@ function loadVideo() {
   }
   
   loading.value = false
+}
+
+function handleLike() {
+  if (!video.value || !currentUser.value) return
+
+  toggleUserLike(video.value.id)
+  
+  const videoRef = getVideoById(video.value.id)
+  if (videoRef) {
+    if (hasLiked(video.value.id)) {
+      videoRef.likes += 1
+    } else {
+      videoRef.likes = Math.max(0, videoRef.likes - 1)
+    }
+  }
 }
 
 onMounted(() => {
@@ -57,6 +72,20 @@ onMounted(() => {
       <div class="video-info">
         <p><strong>Автор:</strong> {{ video?.author || 'Неизвестно' }}</p>
         <p><strong>Просмотров:</strong> {{ video?.views?.toLocaleString() || 0 }}</p>
+      </div>
+
+      <div class="like-section">
+        <button 
+          class="like-button"
+          :class="{ liked: hasLiked(video?.id) }"
+          @click="handleLike"
+        >
+          ❤️ 
+          <span class="like-count">{{ video?.likes?.toLocaleString() || 0 }}</span>
+        </button>
+        <span class="like-text">
+          {{ hasLiked(video?.id) ? 'Вы поставили лайк' : 'Поставить лайк' }}
+        </span>
       </div>
 
       <div class="description">
@@ -91,15 +120,15 @@ onMounted(() => {
 .video-player {
   width: 100%;
   height: auto;
-  max-height: 720px;        
-  aspect-ratio: 16 / 9;       
+  max-height: 720px;
+  aspect-ratio: 16 / 9;
   background: #000;
 }
 
 .video-title {
   font-size: 26px;
   line-height: 1.3;
-  margin: 16px 0 12px 0;
+  margin: 20px 0 12px 0;
   color: var(--fg);
 }
 
@@ -107,23 +136,66 @@ onMounted(() => {
   display: flex;
   gap: 24px;
   color: var(--muted);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border);
   font-size: 15px;
 }
 
+.like-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.like-button:hover {
+  background: #ffebee;
+  border-color: #ff8a8a;
+}
+
+.like-button.liked {
+  background: #e3f2fd;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.like-count {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.like-text {
+  font-size: 15px;
+  color: var(--muted);
+}
+
 .description {
   background: var(--bg);
-  padding: 20px;
+  padding: 24px;
   border-radius: 12px;
   line-height: 1.6;
 }
 
 .description h3 {
   margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 18px;
+  margin-bottom: 16px;
+  font-size: 20px;
 }
 
 @media (max-width: 900px) {

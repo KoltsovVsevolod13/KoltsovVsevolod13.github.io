@@ -43,7 +43,8 @@ export function useAuth() {
       email,
       password,
       name: email.split('@')[0],
-      watched: []
+      watched: [],
+      likedVideos: []
     }
 
     users.value.push(newUser)
@@ -53,33 +54,55 @@ export function useAuth() {
 
   function updateUser(newData) {
     if (!currentUser.value) return false
-
     const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
     if (userIndex === -1) return false
 
     users.value[userIndex] = { ...users.value[userIndex], ...newData }
     currentUser.value = users.value[userIndex]
-
     saveToStorage()
     return true
   }
 
   function addToWatched(videoId) {
     if (!currentUser.value) return false
-
     const videoIdNum = Number(videoId)
-    
-    currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
+    if (!currentUser.value.watched) currentUser.value.watched = []
 
+    currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
     currentUser.value.watched.push(videoIdNum)
 
     const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
     if (userIndex !== -1) {
       users.value[userIndex].watched = [...currentUser.value.watched]
     }
-
     saveToStorage()
     return true
+  }
+
+  function toggleLike(videoId) {
+    if (!currentUser.value) return false
+    const videoIdNum = Number(videoId)
+    if (!currentUser.value.likedVideos) currentUser.value.likedVideos = []
+
+    const index = currentUser.value.likedVideos.indexOf(videoIdNum)
+
+    if (index === -1) {
+      currentUser.value.likedVideos.push(videoIdNum)
+    } else {
+      currentUser.value.likedVideos.splice(index, 1)
+    }
+
+    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
+    if (userIndex !== -1) {
+      users.value[userIndex].likedVideos = [...currentUser.value.likedVideos]
+    }
+    saveToStorage()
+    return true
+  }
+
+  function hasLiked(videoId) {
+    if (!currentUser.value?.likedVideos) return false
+    return currentUser.value.likedVideos.includes(Number(videoId))
   }
 
   function logout() {
@@ -93,6 +116,8 @@ export function useAuth() {
     logout,
     updateUser,
     addToWatched,
+    toggleLike,
+    hasLiked,
     currentUser
   }
 }

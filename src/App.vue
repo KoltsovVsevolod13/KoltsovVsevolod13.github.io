@@ -1,23 +1,34 @@
 <script setup>
 import TheHeader from './components/TheHeader.vue'
 import TheSidebar from './components/TheSidebar.vue'
-import { ref } from 'vue'
-import { RouterView } from 'vue-router'
+import { ref, watch } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 
+const route = useRoute()
 const isSidebarOpen = ref(true)
+
+const showSidebar = ref(false)
 
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value
 }
+
+function updateSidebarVisibility() {
+  showSidebar.value = route.name === 'Home'
+}
+
+watch(() => route.name, updateSidebarVisibility, { immediate: true })
 </script>
 
 <template>
   <div class="app">
     <TheHeader @toggle-sidebar="toggleSidebar" />
     
-    <div class="main-layout" :class="{ 'sidebar-open': isSidebarOpen }">
-      <TheSidebar :is-open="isSidebarOpen" />
-      <main class="content-area">
+    <div class="main-layout" :class="{ 'sidebar-open': isSidebarOpen && showSidebar }">
+
+      <TheSidebar v-if="showSidebar" :is-open="isSidebarOpen" />
+      
+      <main class="content-area" :class="{ 'full-width': !showSidebar }">
         <RouterView />
       </main>
     </div>
@@ -47,8 +58,13 @@ function toggleSidebar() {
   margin-left: 280px;
 }
 
+.content-area.full-width {
+  margin-left: 0 !important;
+}
+
 @media (max-width: 768px) {
-  .main-layout.sidebar-open .content-area {
+  .main-layout.sidebar-open .content-area,
+  .content-area.full-width {
     margin-left: 0;
   }
 }
