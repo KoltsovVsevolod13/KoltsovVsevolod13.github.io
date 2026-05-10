@@ -3,11 +3,12 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useVideos } from '../composables/useVideos.js'
 import { useAuth } from '../composables/useAuth.js'
+import VideoCard from '../components/VideoCard.vue'
 
 const route = useRoute()
 const router = useRouter()
 
-const { getVideoById, incrementViews, toggleLike, addComment, deleteComment } = useVideos()
+const { getVideoById, incrementViews, toggleLike, addComment, deleteComment, videos } = useVideos()
 const { currentUser, addToWatched, hasLiked, toggleLike: toggleUserLike } = useAuth()
 
 const video = ref(null)
@@ -155,78 +156,12 @@ onMounted(() => {
             class="recommended-card"
           />
         </div>
-    <div class="video-wrapper">
-      <div class="video-container">
-        <video controls autoplay class="video-player" :poster="video?.poster">
-          <source :src="video?.url" type="video/mp4" />
-        </video>
-      </div>
-
-      <h1 class="video-title">{{ video?.title }}</h1>
-      
-      <div class="video-info">
-        <p><strong>Автор:</strong> {{ video?.author || 'Неизвестно' }}</p>
-        <p><strong>Просмотров:</strong> {{ video?.views?.toLocaleString() || 0 }}</p>
-      </div>
-
-      <div class="like-section">
-        <button class="like-button" :class="{ liked: hasLiked(video?.id) }" @click="handleLike">
-          ❤️ <span class="like-count">{{ video?.likes?.toLocaleString() || 0 }}</span>
-        </button>
-      </div>
-
-      <div class="comments-section">
-        <h3>Комментарии ({{ video?.comments?.length || 0 }})</h3>
-
-        <div v-if="currentUser" class="comment-form">
-          <textarea 
-            v-model="newCommentText"
-            placeholder="Напишите комментарий..."
-            rows="4"
-          ></textarea>
-          <button @click="submitComment" class="send-btn">Отправить комментарий</button>
-        </div>
-
-        <p v-else class="login-to-comment">Войдите в аккаунт, чтобы оставлять комментарии</p>
-
-        <div class="comments-list">
-          <div v-for="comment in video?.comments" :key="comment.id" class="comment">
-            <div class="comment-avatar">{{ comment.user[0].toUpperCase() }}</div>
-            <div class="comment-body">
-              <div class="comment-header">
-                <strong>{{ comment.user }}</strong>
-                <span class="comment-time">{{ comment.time }}</span>
-              </div>
-              <p class="comment-text">{{ comment.text }}</p>
-            </div>
-            
-            <button 
-              v-if="currentUser && comment.user === (currentUser.name || currentUser.email.split('@')[0])"
-              class="delete-btn"
-              @click="removeComment(comment.id)"
-              title="Удалить"
-            >
-              ✕
-            </button>
-          </div>
-
-          <p v-if="video?.comments?.length === 0" class="no-comments">
-            Пока нет комментариев. Будьте первым!
-          </p>
-        </div>
-      </div>
-
-      <div class="description">
-        <h3>Описание</h3>
-        <p>{{ video?.description || 'Описание видео отсутствует.' }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-<<<<<<< HEAD
-<<<<<<< HEAD
 .watch-page {
   background: var(--bg-2);
   min-height: calc(100vh - 56px);
@@ -250,43 +185,10 @@ onMounted(() => {
 .video-wrapper {
   width: 100%;
 }
-=======
-.watch-page { background: var(--bg-2); min-height: calc(100vh - 56px); padding: 24px 0; }
-.video-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-.video-container { background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
-.video-player { width: 100%; aspect-ratio: 16 / 9; }
 
-.video-title { font-size: 26px; margin: 20px 0 12px; }
-.video-info { display: flex; gap: 24px; color: var(--muted); margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-
-=======
-.watch-page { background: var(--bg-2); min-height: calc(100vh - 56px); padding: 24px 0; }
-.video-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-.video-container { background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
-.video-player { width: 100%; aspect-ratio: 16 / 9; }
-
-.video-title { font-size: 26px; margin: 20px 0 12px; }
-.video-info { display: flex; gap: 24px; color: var(--muted); margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-.like-section { margin: 20px 0 30px 0; }
-
-.like-button {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg); border: 2px solid var(--border);
-  border-radius: 50px; padding: 10px 24px; font-size: 22px;
-  cursor: pointer;
-}
-.like-button.liked { background: #e3f2fd; border-color: #1976d2; color: #1976d2; }
-
-.comments-section {
-  margin-top: 40px;
-  background: var(--bg);
-  padding: 28px;
+.video-container {
+  background: #000;
   border-radius: 12px;
-<<<<<<< HEAD
-<<<<<<< HEAD
   overflow: hidden;
   margin-bottom: 20px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
@@ -402,22 +304,6 @@ onMounted(() => {
 
 .comment-form {
   display: flex;
-=======
-}
-
-.comments-section h3 { margin-bottom: 24px; font-size: 20px; }
-
-.comment-form {
-  display: flex;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-=======
-}
-
-.comments-section h3 { margin-bottom: 24px; font-size: 20px; }
-
-.comment-form {
-  display: flex;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
   flex-direction: column;
   gap: 12px;
   margin-bottom: 32px;
@@ -442,26 +328,10 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  transition: all 0.2s;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-=======
-  transition: all 0.2s;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 }
 
 .send-btn:hover {
   background: #1565c0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  transform: translateY(-2px);
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-=======
-  transform: translateY(-2px);
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 }
 
 .comments-list { margin-top: 8px; }
@@ -515,14 +385,6 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  transition: all 0.2s;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-=======
-  transition: all 0.2s;
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 }
 
 .delete-btn:hover {
@@ -537,8 +399,6 @@ onMounted(() => {
   padding: 60px 0;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 @media (max-width: 1480px) {
   .recommended-sidebar { width: 420px; }
 }
@@ -555,17 +415,5 @@ onMounted(() => {
 @media (max-width: 768px) {
   .video-title { font-size: 22px; }
   .recommended-card :deep(.thumbnail) { width: 160px; }
-=======
-=======
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-.description {
-  background: var(--bg);
-  padding: 24px;
-  border-radius: 12px;
-  margin-top: 40px;
-<<<<<<< HEAD
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
-=======
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 }
 </style>

@@ -36,6 +36,10 @@ function logoutUser() {
 function toggleSidebar() {
   emit('toggle-sidebar')
 }
+
+function createVideo() {
+  alert('Функция загрузки видео будет добавлена позже')
+}
 </script>
 
 <template>
@@ -198,30 +202,6 @@ function toggleSidebar() {
 
 .search-btn:hover {
   background: var(--hover);
-}
-
-.auth-link {
-  padding: 8px 16px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 9999px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.auth-link:hover {
-  background: var(--hover);
-}
-
-.login-btn {
-  background: var(--red);
-  color: white;
-  border: none;
-}
-
-.login-btn:hover {
-  background: #cc0000;
 }
 
 .avatar-btn {
