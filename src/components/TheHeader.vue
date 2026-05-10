@@ -7,6 +7,7 @@ const router = useRouter()
 const { currentUser, logout } = useAuth()
 
 const search = ref('')
+const emit = defineEmits(['toggle-sidebar'])
 
 const avatarColor = computed(() => {
   if (!currentUser.value) return '#ff5722'
@@ -31,12 +32,20 @@ function logoutUser() {
   logout()
   router.push('/login')
 }
+
+function toggleSidebar() {
+  emit('toggle-sidebar')
+}
+
+function createVideo() {
+  alert('Функция загрузки видео будет добавлена позже')
+}
 </script>
 
 <template>
   <header class="header">
     <div class="left">
-      <button class="icon-btn">☰</button>
+      <button class="icon-btn" @click="toggleSidebar">☰</button>
       <a class="logo" href="/">
         <span class="logo-icon">▶</span>
         <span class="logo-text">Videohosting</span>
@@ -51,7 +60,6 @@ function logoutUser() {
         placeholder="Поиск"
       />
       <button class="search-btn">🔍</button>
-      <button class="mic-btn">🎤</button>
     </div>
 
     <div class="right">
@@ -61,7 +69,11 @@ function logoutUser() {
       </template>
 
       <template v-else>
-        <button class="icon-btn">＋</button>
+        <button class="create-btn" @click="createVideo">
+          <span class="plus">＋</span>
+          <span class="create-text">Создать</span>
+        </button>
+
         <button class="avatar-btn" @click="goToProfile" title="Профиль" :style="{ backgroundColor: avatarColor }">
           {{ currentUser.email[0].toUpperCase() }}
         </button>
@@ -81,7 +93,7 @@ function logoutUser() {
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .left, .right {
@@ -131,6 +143,36 @@ function logoutUser() {
   background: var(--hover);
 }
 
+.create-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f2f2f2;
+  color: #0f0f0f;
+  border: 1px solid #dadada;
+  border-radius: 9999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-btn:hover {
+  background: #e5e5e5;
+  border-color: #aaaaaa;
+}
+
+.plus {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.create-text {
+  white-space: nowrap;
+}
+
 .search {
   flex: 1;
   padding: 0 16px;
@@ -162,41 +204,6 @@ function logoutUser() {
   background: var(--hover);
 }
 
-.mic-btn {
-  width: 40px;
-  height: 40px;
-  margin-left: 8px;
-  background: var(--bg-2);
-  border: none;
-  border-radius: 50%;
-  color: var(--fg);
-  cursor: pointer;
-}
-
-.auth-link {
-  padding: 8px 16px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 9999px;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-.auth-link:hover {
-  background: var(--hover);
-}
-
-.login-btn {
-  background: var(--red);
-  color: white;
-  border: none;
-}
-
-.login-btn:hover {
-  background: #cc0000;
-}
-
 .avatar-btn {
   width: 32px;
   height: 32px;
@@ -214,5 +221,15 @@ function logoutUser() {
 
 .avatar-btn:hover {
   transform: scale(1.08);
+}
+
+@media (max-width: 900px) {
+  .create-btn .create-text {
+    display: none;
+  }
+  
+  .create-btn {
+    padding: 8px 12px;
+  }
 }
 </style>
