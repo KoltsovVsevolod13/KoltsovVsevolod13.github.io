@@ -36,10 +36,6 @@ function logoutUser() {
 function toggleSidebar() {
   emit('toggle-sidebar')
 }
-
-function createVideo() {
-  alert('Функция загрузки видео будет добавлена позже')
-}
 </script>
 
 <template>
