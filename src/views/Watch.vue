@@ -72,7 +72,6 @@ onMounted(() => {
 
 <template>
   <div class="watch-page">
-<<<<<<< HEAD
     <div class="watch-container">
       <div class="video-main">
         <div class="video-wrapper">
@@ -156,7 +155,6 @@ onMounted(() => {
             class="recommended-card"
           />
         </div>
-=======
     <div class="video-wrapper">
       <div class="video-container">
         <video controls autoplay class="video-player" :poster="video?.poster">
@@ -221,13 +219,13 @@ onMounted(() => {
       <div class="description">
         <h3>Описание</h3>
         <p>{{ video?.description || 'Описание видео отсутствует.' }}</p>
->>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+<<<<<<< HEAD
 <<<<<<< HEAD
 .watch-page {
   background: var(--bg-2);
@@ -262,6 +260,16 @@ onMounted(() => {
 .video-info { display: flex; gap: 24px; color: var(--muted); margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 
+=======
+.watch-page { background: var(--bg-2); min-height: calc(100vh - 56px); padding: 24px 0; }
+.video-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.video-container { background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.video-player { width: 100%; aspect-ratio: 16 / 9; }
+
+.video-title { font-size: 26px; margin: 20px 0 12px; }
+.video-info { display: flex; gap: 24px; color: var(--muted); margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 .like-section { margin: 20px 0 30px 0; }
 
 .like-button {
@@ -277,6 +285,7 @@ onMounted(() => {
   background: var(--bg);
   padding: 28px;
   border-radius: 12px;
+<<<<<<< HEAD
 <<<<<<< HEAD
   overflow: hidden;
   margin-bottom: 20px;
@@ -401,6 +410,14 @@ onMounted(() => {
 .comment-form {
   display: flex;
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
+=======
+}
+
+.comments-section h3 { margin-bottom: 24px; font-size: 20px; }
+
+.comment-form {
+  display: flex;
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
   flex-direction: column;
   gap: 12px;
   margin-bottom: 32px;
@@ -426,6 +443,10 @@ onMounted(() => {
   font-weight: 500;
   cursor: pointer;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  transition: all 0.2s;
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 =======
   transition: all 0.2s;
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
@@ -434,6 +455,10 @@ onMounted(() => {
 .send-btn:hover {
   background: #1565c0;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  transform: translateY(-2px);
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 =======
   transform: translateY(-2px);
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
@@ -491,6 +516,10 @@ onMounted(() => {
   justify-content: center;
   border-radius: 50%;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+  transition: all 0.2s;
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 =======
   transition: all 0.2s;
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
@@ -509,6 +538,7 @@ onMounted(() => {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 @media (max-width: 1480px) {
   .recommended-sidebar { width: 420px; }
 }
@@ -526,11 +556,16 @@ onMounted(() => {
   .video-title { font-size: 22px; }
   .recommended-card :deep(.thumbnail) { width: 160px; }
 =======
+=======
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 .description {
   background: var(--bg);
   padding: 24px;
   border-radius: 12px;
   margin-top: 40px;
+<<<<<<< HEAD
+>>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
+=======
 >>>>>>> 65d9972da5e179c21c33dc5c50cc23ff0f070925
 }
 </style>
