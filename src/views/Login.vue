@@ -12,6 +12,11 @@ const emailError = ref('')
 const passwordError = ref('')
 const generalError = ref('')
 
+function isValidEmail(emailString) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(emailString)
+}
+
 function validateForm() {
   emailError.value = ''
   passwordError.value = ''
@@ -21,6 +26,9 @@ function validateForm() {
 
   if (!email.value.trim()) {
     emailError.value = 'Введите email'
+    isValid = false
+  } else if (!isValidEmail(email.value.trim())) {
+    emailError.value = 'Введите корректный email адрес'
     isValid = false
   }
 
