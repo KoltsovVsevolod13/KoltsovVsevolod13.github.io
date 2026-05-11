@@ -172,6 +172,76 @@ const defaultVideos = [
   }
 ]
 
+const scheduledVideos = ref([])
+
+function loadScheduledFromStorage() {
+  const saved = localStorage.getItem('scheduledVideos')
+  if (saved) {
+    scheduledVideos.value = JSON.parse(saved)
+  }
+}
+
+function saveScheduledToStorage() {
+  localStorage.setItem('scheduledVideos', JSON.stringify(scheduledVideos.value))
+}
+
+function publishDueScheduledVideos() {
+  if (!scheduledVideos.value.length) return
+
+  const now = new Date()
+
+  const toPublish = scheduledVideos.value.filter(video => {
+    const scheduledDate = new Date(video.scheduledFor)
+    return scheduledDate <= now
+  })
+
+  if (toPublish.length === 0) return
+
+  console.log(`📌 Публикуем ${toPublish.length} запланированных видео`)
+
+  toPublish.forEach(video => {
+    const { scheduledFor, status, ...publishedVideo } = video
+    
+    publishedVideo.views = 0
+    publishedVideo.likes = 0
+    publishedVideo.comments = []
+    
+    videos.value.unshift(publishedVideo)
+  })
+
+  scheduledVideos.value = scheduledVideos.value.filter(video => {
+    const scheduledDate = new Date(video.scheduledFor)
+    return scheduledDate > now
+  })
+
+  saveToStorage()
+  saveScheduledToStorage()
+}
+
+function addScheduledVideo(newVideo) {
+  scheduledVideos.value.unshift({
+    ...newVideo,
+    scheduledFor: newVideo.scheduledFor,
+    status: 'scheduled'
+  })
+  saveScheduledToStorage()
+  return true
+}
+
+function getScheduledVideos(userName) {
+  return scheduledVideos.value.filter(v => v.author === userName)
+}
+
+function deleteScheduledVideo(id) {
+  const index = scheduledVideos.value.findIndex(v => v.id === Number(id))
+  if (index !== -1) {
+    scheduledVideos.value.splice(index, 1)
+    saveScheduledToStorage()
+    return true
+  }
+  return false
+}
+
 function loadFromStorage() {
   const savedVideos = localStorage.getItem('videos')
   if (savedVideos) {
@@ -261,14 +331,24 @@ function deleteVideo(videoId) {
 export function useVideos() {
   onMounted(() => {
     loadFromStorage()
+    loadScheduledFromStorage()
+    publishDueScheduledVideos()
+
+    setInterval(() => {
+      publishDueScheduledVideos()
+    }, 30000)
   })
 
   return {
     videos,
+    scheduledVideos,
     getVideoById,
     incrementViews,
     toggleLike,
     addVideo,
+    addScheduledVideo,
+    getScheduledVideos,
+    deleteScheduledVideo,
     addComment,
     deleteComment,
     deleteVideo,

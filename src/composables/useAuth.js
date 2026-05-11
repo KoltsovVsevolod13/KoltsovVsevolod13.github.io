@@ -104,16 +104,19 @@ export function useAuth() {
 
   function addToWatched(videoId) {
     if (!currentUser.value) return false
+    
     const videoIdNum = Number(videoId)
     if (!currentUser.value.watched) currentUser.value.watched = []
 
     currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
-    currentUser.value.watched.push(videoIdNum)
+    
+    currentUser.value.watched.unshift(videoIdNum)
 
     const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
     if (userIndex !== -1) {
       users.value[userIndex] = { ...currentUser.value }
     }
+    
     saveToStorage()
     return true
   }

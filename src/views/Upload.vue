@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVideos } from '../composables/useVideos.js'
 import { useAuth } from '../composables/useAuth.js'
 
 const router = useRouter()
-const { addVideo } = useVideos()
+const { addVideo, addScheduledVideo } = useVideos()
 const { currentUser } = useAuth()
 
 const title = ref('')
@@ -13,6 +13,9 @@ const url = ref('https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Bu
 const poster = ref('https://picsum.photos/id/1015/1280/720')
 const category = ref('Разное')
 const description = ref('')
+
+const publishType = ref('now')
+const scheduledDate = ref('')
 
 const titleError = ref('')
 const urlError = ref('')
@@ -23,6 +26,12 @@ const categories = [
   'Животные', 'Кулинария', 'Образование', 'Путешествия',
   'Здоровье', 'Фото и видео', 'Игры', 'Музыка', 'Наука', 'Разное'
 ]
+
+const minDate = computed(() => {
+  const now = new Date()
+  now.setMinutes(now.getMinutes() + 2)
+  return now.toISOString().slice(0, 16)
+})
 
 function isValidUrl(string) {
   try {
@@ -59,6 +68,20 @@ function validateForm() {
     isValid = false
   }
 
+  if (publishType.value === 'scheduled') {
+    if (!scheduledDate.value) {
+      generalError.value = 'Выберите дату и время публикации'
+      isValid = false
+    } else {
+      const selected = new Date(scheduledDate.value)
+      const now = new Date()
+      if (selected < now) {
+        generalError.value = 'Нельзя выбрать дату и время в прошлом'
+        isValid = false
+      }
+    }
+  }
+
   return isValid
 }
 
@@ -83,17 +106,34 @@ function publishVideo() {
     comments: []
   }
 
-  const success = addVideo(newVideo)
-
-  if (success) {
-    title.value = ''
-    url.value = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4'
-    poster.value = 'https://picsum.photos/id/1015/1280/720'
-    description.value = ''
-    router.push('/')
+  if (publishType.value === 'now') {
+    const success = addVideo(newVideo)
+    if (success) {
+      resetForm()
+      router.push('/')
+    }
   } else {
-    generalError.value = 'Ошибка при публикации видео'
+    const scheduledVideo = {
+      ...newVideo,
+      scheduledFor: scheduledDate.value,
+      status: 'scheduled'
+    }
+
+    const success = addScheduledVideo(scheduledVideo)
+    if (success) {
+      resetForm()
+      router.push('/')
+    }
   }
+}
+
+function resetForm() {
+  title.value = ''
+  url.value = 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4'
+  poster.value = 'https://picsum.photos/id/1015/1280/720'
+  description.value = ''
+  scheduledDate.value = ''
+  publishType.value = 'now'
 }
 </script>
 
@@ -135,7 +175,6 @@ function publishVideo() {
             :class="{ 'input-error': posterError }"
           />
           <p v-if="posterError" class="error-text">{{ posterError }}</p>
-          <small class="hint">Изображение, которое будет отображаться до воспроизведения</small>
         </div>
 
         <div class="form-group">
@@ -145,6 +184,31 @@ function publishVideo() {
               {{ cat }}
             </option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label>Когда опубликовать?</label>
+          <div class="publish-options">
+            <label class="radio-label">
+              <input type="radio" v-model="publishType" value="now" />
+              Опубликовать сейчас
+            </label>
+            <label class="radio-label">
+              <input type="radio" v-model="publishType" value="scheduled" />
+              Запланировать публикацию
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" v-if="publishType === 'scheduled'">
+          <label>Дата и время публикации *</label>
+          <input 
+            v-model="scheduledDate" 
+            type="datetime-local" 
+            :min="minDate"
+            required
+          />
+          <small class="hint">Минимальное время — через 2 минуты</small>
         </div>
 
         <div class="form-group">
@@ -159,7 +223,7 @@ function publishVideo() {
         <p v-if="generalError" class="error-text general">{{ generalError }}</p>
 
         <button type="submit" class="publish-btn">
-          Опубликовать видео
+          {{ publishType === 'now' ? 'Опубликовать видео' : 'Запланировать публикацию' }}
         </button>
       </form>
     </div>
@@ -254,5 +318,18 @@ input:focus, select:focus, textarea:focus {
 .general {
   margin-bottom: 12px;
   text-align: center;
+}
+
+.publish-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
 }
 </style>

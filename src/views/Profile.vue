@@ -7,7 +7,7 @@ import VideoCard from '../components/VideoCard.vue'
 
 const router = useRouter()
 const { currentUser, updateUser, logout } = useAuth()
-const { videos, getVideoById, deleteVideo } = useVideos()
+const { videos, getVideoById, deleteVideo, getScheduledVideos, deleteScheduledVideo } = useVideos()
 
 const name = ref('')
 const oldPassword = ref('')
@@ -21,6 +21,9 @@ const successMessage = ref('')
 const showDeleteVideoModal = ref(false)
 const videoToDelete = ref(null)
 
+const showDeleteScheduledModal = ref(false)
+const scheduledToDelete = ref(null)
+
 if (currentUser.value) {
   name.value = currentUser.value.name || ''
 }
@@ -33,6 +36,12 @@ const myVideos = computed(() => {
   if (!currentUser.value) return []
   const userName = currentUser.value.name || currentUser.value.email.split('@')[0]
   return videos.value.filter(v => v.author === userName)
+})
+
+const myScheduledVideos = computed(() => {
+  if (!currentUser.value) return []
+  const userName = currentUser.value.name || currentUser.value.email.split('@')[0]
+  return getScheduledVideos(userName)
 })
 
 const watchedVideos = computed(() => {
@@ -112,6 +121,25 @@ function closeDeleteVideoModal() {
   videoToDelete.value = null
 }
 
+function openDeleteScheduledModal(video) {
+  scheduledToDelete.value = video
+  showDeleteScheduledModal.value = true
+}
+
+function confirmDeleteScheduled() {
+  if (scheduledToDelete.value) {
+    deleteScheduledVideo(scheduledToDelete.value.id)
+    successMessage.value = 'Запланированное видео удалено!'
+    setTimeout(() => { successMessage.value = '' }, 2000)
+  }
+  closeDeleteScheduledModal()
+}
+
+function closeDeleteScheduledModal() {
+  showDeleteScheduledModal.value = false
+  scheduledToDelete.value = null
+}
+
 function logoutUser() {
   logout()
   router.push('/login')
@@ -168,6 +196,23 @@ function logoutUser() {
         </div>
 
         <div class="section">
+          <h2>Запланированные видео ({{ myScheduledVideos.length }})</h2>
+          <div v-if="myScheduledVideos.length === 0" class="placeholder">
+            У вас нет запланированных видео
+          </div>
+          <div v-else class="my-videos-grid">
+            <div v-for="v in myScheduledVideos" :key="v.id" class="my-video-card">
+              <VideoCard :id="v.id" :title="v.title" :poster="v.poster" />
+              <div class="scheduled-info">
+                <small>Запланировано на:</small>
+                <span>{{ new Date(v.scheduledFor).toLocaleString('ru-RU') }}</span>
+              </div>
+              <button class="delete-video-btn" @click="openDeleteScheduledModal(v)">Удалить</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
           <h2>История просмотров ({{ watchedVideos.length }})</h2>
           <div v-if="watchedVideos.length === 0" class="placeholder">
             Вы ещё не посмотрели ни одного видео
@@ -193,6 +238,17 @@ function logoutUser() {
       <div class="modal-buttons">
         <button class="cancel-btn" @click="closeDeleteVideoModal">Отмена</button>
         <button class="delete-confirm-btn" @click="confirmDeleteVideo">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="showDeleteScheduledModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Удалить запланированное видео?</h3>
+      <p>Видео «{{ scheduledToDelete?.title }}» не будет опубликовано.<br>Это действие нельзя отменить.</p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" @click="closeDeleteScheduledModal">Отмена</button>
+        <button class="delete-confirm-btn" @click="confirmDeleteScheduled">Удалить</button>
       </div>
     </div>
   </div>
@@ -310,6 +366,7 @@ input:focus {
   margin: 20px 0;
 }
 
+/* Сетка видео */
 .history-grid, .my-videos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -319,11 +376,43 @@ input:focus {
 
 .my-video-card {
   position: relative;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  padding-bottom: 12px;
+  transition: all 0.2s ease;
 }
 
+.my-video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Информация о запланированной дате */
+.scheduled-info {
+  padding: 8px 12px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  background: #fff8e1;
+  border-top: 1px solid var(--border);
+}
+
+.scheduled-info small {
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.scheduled-info span {
+  color: #d97706;
+  font-weight: 500;
+}
+
+/* Кнопка удалить */
 .delete-video-btn {
   position: absolute;
-  bottom: 12px;
+  top: 12px;
   right: 12px;
   background: var(--red);
   color: white;
@@ -333,12 +422,17 @@ input:focus {
   cursor: pointer;
   font-size: 13px;
   z-index: 10;
+  opacity: 0.9;
+  transition: all 0.2s;
 }
 
 .delete-video-btn:hover {
   background: #cc0000;
+  opacity: 1;
+  transform: scale(1.05);
 }
 
+/* Модальные окна */
 .modal-overlay {
   position: fixed;
   top: 0;
