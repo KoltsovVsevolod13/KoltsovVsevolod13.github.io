@@ -6,8 +6,12 @@ import { RouterView, useRoute } from 'vue-router'
 
 const route = useRoute()
 const isSidebarOpen = ref(true)
-
 const showSidebar = ref(false)
+const selectedCategory = ref('Главная')
+
+const emitCategory = (category) => {
+  selectedCategory.value = category
+}
 
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -26,10 +30,14 @@ watch(() => route.name, updateSidebarVisibility, { immediate: true })
     
     <div class="main-layout" :class="{ 'sidebar-open': isSidebarOpen && showSidebar }">
 
-      <TheSidebar v-if="showSidebar" :is-open="isSidebarOpen" />
+      <TheSidebar 
+        v-if="showSidebar" 
+        :is-open="isSidebarOpen"
+        @category-selected="emitCategory"
+      />
       
       <main class="content-area" :class="{ 'full-width': !showSidebar }">
-        <RouterView />
+        <RouterView :selected-category="selectedCategory" />
       </main>
     </div>
   </div>

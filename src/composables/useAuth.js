@@ -28,7 +28,7 @@ export function useAuth() {
   function login(email, password) {
     const user = users.value.find(u => u.email === email && u.password === password)
     if (user) {
-      currentUser.value = user
+      currentUser.value = { ...user }
       saveToStorage()
       return true
     }
@@ -52,35 +52,9 @@ export function useAuth() {
     return true
   }
 
-  function updateUser(newData) {
-    if (!currentUser.value) return false
-    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
-    if (userIndex === -1) return false
-
-    users.value[userIndex] = { ...users.value[userIndex], ...newData }
-    currentUser.value = users.value[userIndex]
-    saveToStorage()
-    return true
-  }
-
-  function addToWatched(videoId) {
-    if (!currentUser.value) return false
-    const videoIdNum = Number(videoId)
-    if (!currentUser.value.watched) currentUser.value.watched = []
-
-    currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
-    currentUser.value.watched.push(videoIdNum)
-
-    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
-    if (userIndex !== -1) {
-      users.value[userIndex].watched = [...currentUser.value.watched]
-    }
-    saveToStorage()
-    return true
-  }
-
   function toggleLike(videoId) {
     if (!currentUser.value) return false
+
     const videoIdNum = Number(videoId)
     if (!currentUser.value.likedVideos) currentUser.value.likedVideos = []
 
@@ -94,8 +68,9 @@ export function useAuth() {
 
     const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
     if (userIndex !== -1) {
-      users.value[userIndex].likedVideos = [...currentUser.value.likedVideos]
+      users.value[userIndex] = { ...currentUser.value }
     }
+
     saveToStorage()
     return true
   }
@@ -103,6 +78,22 @@ export function useAuth() {
   function hasLiked(videoId) {
     if (!currentUser.value?.likedVideos) return false
     return currentUser.value.likedVideos.includes(Number(videoId))
+  }
+
+  function addToWatched(videoId) {
+    if (!currentUser.value) return false
+    const videoIdNum = Number(videoId)
+    if (!currentUser.value.watched) currentUser.value.watched = []
+
+    currentUser.value.watched = currentUser.value.watched.filter(id => id !== videoIdNum)
+    currentUser.value.watched.push(videoIdNum)
+
+    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
+    if (userIndex !== -1) {
+      users.value[userIndex] = { ...currentUser.value }
+    }
+    saveToStorage()
+    return true
   }
 
   function logout() {
@@ -114,10 +105,9 @@ export function useAuth() {
     login,
     register,
     logout,
-    updateUser,
-    addToWatched,
     toggleLike,
     hasLiked,
+    addToWatched,
     currentUser
   }
 }

@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 
+const emit = defineEmits(['category-selected'])
+
 const props = defineProps({
   isOpen: Boolean
 })
 
-const items = ref([
+const categories = ref([
   { icon: '🏠', label: 'Главная' },
   { icon: '🎵', label: 'Музыка' },
   { icon: '🎮', label: 'Игры' },
@@ -18,23 +20,25 @@ const items = ref([
   { icon: '🧠', label: 'Наука' }
 ])
 
-const active = ref('Главная')
+const activeCategory = ref('Главная')
 
-function onClick(label) {
-  active.value = label
+function selectCategory(label) {
+  activeCategory.value = label
+  emit('category-selected', label)
 }
 </script>
 
 <template>
   <aside class="sidebar" :class="{ open: isOpen }">
     <button
-      v-for="i in items"
+      v-for="cat in categories"
+      :key="cat.label"
       class="item"
-      :class="{ active: active === i.label }"
-      @click="onClick(i.label)"
+      :class="{ active: activeCategory === cat.label }"
+      @click="selectCategory(cat.label)"
     >
-      <span class="icon">{{ i.icon }}</span>
-      <span class="label">{{ i.label }}</span>
+      <span class="icon">{{ cat.icon }}</span>
+      <span class="label">{{ cat.label }}</span>
     </button>
   </aside>
 </template>

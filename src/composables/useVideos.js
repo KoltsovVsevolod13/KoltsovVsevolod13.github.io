@@ -9,6 +9,7 @@ const videos = ref([
     author: 'Познавательный мир',
     views: 45200,
     likes: 1240,
+    category: 'Животные',
     description: 'Удивительные факты о самых больших наземных животных планеты.',
     comments: [
       { id: 101, user: 'Алексей', text: 'Очень интересное видео! Особенно про память слонов.', time: '2 часа назад' },
@@ -23,11 +24,9 @@ const videos = ref([
     author: 'Кухня с душой',
     views: 31800,
     likes: 875,
+    category: 'Кулинария',
     description: 'Простой и вкусный рецепт итальянской классики.',
-    comments: [
-      { id: 201, user: 'Дмитрий', text: 'Сделал по рецепту — получилось очень вкусно!', time: '5 часов назад' },
-      { id: 202, user: 'Ольга', text: 'А можно вместо базилика использовать другую зелень?', time: '12 часов назад' }
-    ]
+    comments: []
   },
   {
     id: 3,
@@ -37,11 +36,9 @@ const videos = ref([
     author: 'English Easy',
     views: 27400,
     likes: 2150,
+    category: 'Образование',
     description: 'Методы, которые реально работают.',
-    comments: [
-      { id: 301, user: 'Иван', text: 'Спасибо! Очень полезные советы', time: '1 день назад' },
-      { id: 302, user: 'Кристина', text: 'Практикую каждый день, уже заметен прогресс', time: '18 часов назад' }
-    ]
+    comments: []
   },
   {
     id: 4,
@@ -51,10 +48,9 @@ const videos = ref([
     author: 'Путешествия',
     views: 18900,
     likes: 980,
+    category: 'Путешествия',
     description: 'Места, от которых захватывает дух.',
-    comments: [
-      { id: 401, user: 'Анна', text: 'Бали выглядит просто невероятно!', time: '3 дня назад' }
-    ]
+    comments: []
   },
   {
     id: 5,
@@ -64,6 +60,7 @@ const videos = ref([
     author: 'Coffee Lab',
     views: 15600,
     likes: 645,
+    category: 'Кулинария',
     description: 'Секреты приготовления как в кофейне.',
     comments: []
   },
@@ -75,10 +72,9 @@ const videos = ref([
     author: 'Здоровье каждый день',
     views: 22300,
     likes: 1340,
+    category: 'Здоровье',
     description: 'Простая тренировка на каждый день.',
-    comments: [
-      { id: 601, user: 'Екатерина', text: 'Уже второй день делаю — спина стала ровнее!', time: '7 часов назад' }
-    ]
+    comments: []
   },
   {
     id: 7,
@@ -88,6 +84,7 @@ const videos = ref([
     author: 'ФотоМастер',
     views: 9800,
     likes: 720,
+    category: 'Фото и видео',
     description: 'Лайфхаки мобильной съёмки 2025.',
     comments: []
   },
@@ -99,12 +96,9 @@ const videos = ref([
     author: 'Кошачий мир',
     views: 41200,
     likes: 2890,
+    category: 'Животные',
     description: 'Разбираем странное поведение домашних любимцев.',
-    comments: [
-      { id: 801, user: 'Виктор', text: 'Мой кот делает точно так же 😂', time: '4 часа назад' },
-      { id: 802, user: 'Настя', text: 'Видео огонь! Сохранила', time: '1 день назад' },
-      { id: 803, user: 'Артём', text: 'А у меня кот вообще по потолку бегает ночью', time: '14 часов назад' }
-    ]
+    comments: []
   },
   {
     id: 9,
@@ -114,6 +108,7 @@ const videos = ref([
     author: 'GameZone',
     views: 15600,
     likes: 920,
+    category: 'Игры',
     description: 'Обзор самых интересных инди-проектов.',
     comments: []
   },
@@ -125,10 +120,9 @@ const videos = ref([
     author: 'Музыка с душой',
     views: 28900,
     likes: 1650,
+    category: 'Музыка',
     description: 'Первый урок для начинающих.',
-    comments: [
-      { id: 1001, user: 'Саша', text: 'Начал заниматься, уже получается!', time: '6 часов назад' }
-    ]
+    comments: []
   },
   {
     id: 11,
@@ -138,6 +132,7 @@ const videos = ref([
     author: 'ВидеоМастер',
     views: 12400,
     likes: 780,
+    category: 'Фото и видео',
     description: 'Бесплатные приложения и приёмы монтажа.',
     comments: []
   },
@@ -149,6 +144,7 @@ const videos = ref([
     author: 'Познавательный мир',
     views: 36700,
     likes: 1120,
+    category: 'Животные',
     description: 'Какая порода самая умная?',
     comments: []
   },
@@ -160,11 +156,9 @@ const videos = ref([
     author: 'Кухня с душой',
     views: 19800,
     likes: 650,
+    category: 'Кулинария',
     description: 'Вкусные и полезные идеи на каждый день.',
-    comments: [
-      { id: 1301, user: 'Юлия', text: 'Очень timely, спасибо!', time: '1 час назад' },
-      { id: 1302, user: 'Максим', text: 'Попробовал овсянку по вашему рецепту — огонь!', time: '2 дня назад' }
-    ]
+    comments: []
   }
 ])
 

@@ -64,8 +64,12 @@ function createVideo() {
 
     <div class="right">
       <template v-if="!currentUser">
-        <button class="auth-link" @click="goToRegister">Создать аккаунт</button>
-        <button class="auth-link login-btn" @click="goToLogin">Войти</button>
+        <button class="auth-btn register-btn" @click="goToRegister">
+          Создать аккаунт
+        </button>
+        <button class="auth-btn login-btn" @click="goToLogin">
+          Войти
+        </button>
       </template>
 
       <template v-else>
@@ -74,7 +78,7 @@ function createVideo() {
           <span class="create-text">Создать</span>
         </button>
 
-        <button class="avatar-btn" @click="goToProfile" title="Профиль" :style="{ backgroundColor: avatarColor }">
+        <button class="avatar-btn" @click="goToProfile" :style="{ backgroundColor: avatarColor }">
           {{ currentUser.email[0].toUpperCase() }}
         </button>
       </template>
@@ -141,6 +145,36 @@ function createVideo() {
 
 .icon-btn:hover {
   background: var(--hover);
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.register-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+}
+
+.register-btn:hover {
+  background: var(--hover);
+}
+
+.login-btn {
+  background: var(--red);
+  color: white;
+  border: none;
+}
+
+.login-btn:hover {
+  background: #cc0000;
 }
 
 .create-btn {
@@ -227,9 +261,13 @@ function createVideo() {
   .create-btn .create-text {
     display: none;
   }
-  
   .create-btn {
     padding: 8px 12px;
+  }
+  
+  .auth-btn {
+    padding: 7px 14px;
+    font-size: 13px;
   }
 }
 </style>

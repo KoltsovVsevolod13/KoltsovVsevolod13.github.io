@@ -1,19 +1,31 @@
 <script setup>
 import VideoCard from '../components/VideoCard.vue'
 import { useVideos } from '../composables/useVideos.js'
+import { computed, defineProps } from 'vue'
+
+const props = defineProps({
+  selectedCategory: String
+})
 
 const { videos } = useVideos()
+
+const filteredVideos = computed(() => {
+  if (!props.selectedCategory || props.selectedCategory === 'Главная') {
+    return videos.value
+  }
+  return videos.value.filter(video => video.category === props.selectedCategory)
+})
 </script>
 
 <template>
   <div class="home-page">
-    <div v-if="videos.length === 0" class="empty-state">
-      <p>Пока нет видео</p>
+    <div v-if="filteredVideos.length === 0" class="empty-state">
+      <p>Видео в этой категории пока нет</p>
     </div>
     
     <div class="grid" v-else>
       <VideoCard
-        v-for="v in videos"
+        v-for="v in filteredVideos"
         :key="v.id"
         :id="v.id"
         :title="v.title"
