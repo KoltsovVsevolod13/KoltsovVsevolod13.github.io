@@ -9,7 +9,7 @@ const router = useRouter()
 const { currentUser, updateUser, logout } = useAuth()
 const { videos, getVideoById, deleteVideo } = useVideos()
 
-const name = ref(currentUser.value?.name || '')
+const name = ref('')
 const oldPassword = ref('')
 const newPassword = ref('')
 const confirmNewPassword = ref('')
@@ -20,6 +20,10 @@ const successMessage = ref('')
 
 const showDeleteVideoModal = ref(false)
 const videoToDelete = ref(null)
+
+if (currentUser.value) {
+  name.value = currentUser.value.name || ''
+}
 
 const avatarColor = computed(() => {
   return currentUser.value?.avatarColor || '#ff5722'
@@ -39,13 +43,22 @@ const watchedVideos = computed(() => {
 })
 
 function saveName() {
+  nameError.value = ''
+  successMessage.value = ''
+
   if (!name.value.trim()) {
     nameError.value = 'Имя не может быть пустым'
     return
   }
-  updateUser({ name: name.value.trim() })
-  successMessage.value = 'Имя успешно обновлено!'
-  setTimeout(() => { successMessage.value = '' }, 2500)
+
+  const success = updateUser({ name: name.value.trim() })
+
+  if (success) {
+    successMessage.value = 'Имя успешно обновлено!'
+    setTimeout(() => { successMessage.value = '' }, 2500)
+  } else {
+    nameError.value = 'Ошибка при обновлении'
+  }
 }
 
 function changePassword() {
@@ -69,11 +82,15 @@ function changePassword() {
     return
   }
 
-  updateUser({ password: newPassword.value })
-  successMessage.value = 'Пароль успешно изменён!'
-  oldPassword.value = ''
-  newPassword.value = ''
-  confirmNewPassword.value = ''
+  const success = updateUser({ password: newPassword.value })
+
+  if (success) {
+    successMessage.value = 'Пароль успешно изменён!'
+    oldPassword.value = ''
+    newPassword.value = ''
+    confirmNewPassword.value = ''
+    setTimeout(() => { successMessage.value = '' }, 2500)
+  }
 }
 
 function openDeleteVideoModal(video) {
@@ -139,21 +156,13 @@ function logoutUser() {
 
         <div class="section">
           <h2>Мои видео ({{ myVideos.length }})</h2>
-          
           <div v-if="myVideos.length === 0" class="placeholder">
             Вы ещё не загрузили ни одного видео
           </div>
-          
           <div v-else class="my-videos-grid">
             <div v-for="v in myVideos" :key="v.id" class="my-video-card">
-              <VideoCard
-                :id="v.id"
-                :title="v.title"
-                :poster="v.poster"
-              />
-              <button class="delete-video-btn" @click="openDeleteVideoModal(v)">
-                Удалить
-              </button>
+              <VideoCard :id="v.id" :title="v.title" :poster="v.poster" />
+              <button class="delete-video-btn" @click="openDeleteVideoModal(v)">Удалить</button>
             </div>
           </div>
         </div>

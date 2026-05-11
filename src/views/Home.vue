@@ -1,6 +1,7 @@
 <script setup>
 import VideoCard from '../components/VideoCard.vue'
 import { useVideos } from '../composables/useVideos.js'
+import { useAuth } from '../composables/useAuth.js'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -8,19 +9,32 @@ const props = defineProps({
 })
 
 const { videos } = useVideos()
+const { currentUser, hasLiked } = useAuth()
 
 const filteredVideos = computed(() => {
-  if (!props.selectedCategory || props.selectedCategory === 'Главная') {
+  const category = props.selectedCategory
+
+  if (category === 'Понравившиеся') {
+    if (!currentUser.value) return []
+    
+    return videos.value.filter(video => hasLiked(video.id))
+  }
+
+  if (!category || category === 'Главная') {
     return videos.value
   }
-  return videos.value.filter(video => video.category === props.selectedCategory)
+
+  return videos.value.filter(video => video.category === category)
 })
 </script>
 
 <template>
   <div class="home-page">
     <div v-if="filteredVideos.length === 0" class="empty-state">
-      <p>Видео в этой категории пока нет</p>
+      <p v-if="selectedCategory === 'Понравившиеся'">
+        Вы ещё не поставили лайк ни одному видео
+      </p>
+      <p v-else>Видео в этой категории пока нет</p>
     </div>
     
     <div class="grid" v-else>
@@ -36,6 +50,21 @@ const filteredVideos = computed(() => {
 </template>
 
 <style scoped>
+.home-page { padding-top: 20px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 24px 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100px 20px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
 .home-page {
   padding-top: 20px;
 }

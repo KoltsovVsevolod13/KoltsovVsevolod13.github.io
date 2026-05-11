@@ -60,6 +60,20 @@ export function useAuth() {
     return true
   }
 
+  function updateUser(updates) {
+    if (!currentUser.value) return false
+
+    currentUser.value = { ...currentUser.value, ...updates }
+
+    const userIndex = users.value.findIndex(u => u.id === currentUser.value.id)
+    if (userIndex !== -1) {
+      users.value[userIndex] = { ...currentUser.value }
+    }
+
+    saveToStorage()
+    return true
+  }
+
   function toggleLike(videoId) {
     if (!currentUser.value) return false
 
@@ -113,6 +127,7 @@ export function useAuth() {
     login,
     register,
     logout,
+    updateUser,
     toggleLike,
     hasLiked,
     addToWatched,

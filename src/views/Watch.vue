@@ -9,7 +9,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { getVideoById, incrementViews, toggleLike, addComment, deleteComment } = useVideos()
-const { currentUser, addToWatched } = useAuth()
+const { currentUser, addToWatched, hasLiked } = useAuth()
 
 const video = ref(null)
 let player = null
@@ -20,6 +20,10 @@ const errorMessage = ref('')
 
 const showDeleteModal = ref(false)
 const commentToDelete = ref(null)
+
+const isLiked = computed(() => {
+  return hasLiked(route.params.id)
+})
 
 function loadVideo() {
   const foundVideo = getVideoById(route.params.id)
@@ -136,7 +140,12 @@ watch(() => video.value?.url, () => {
 
       <div class="video-header">
         <h1 class="video-title">{{ video?.title }}</h1>
-        <button class="like-button" @click="handleLike">
+        
+        <button 
+          class="like-button" 
+          :class="{ liked: isLiked }"
+          @click="handleLike"
+        >
           ❤️ {{ video?.likes?.toLocaleString() || 0 }}
         </button>
       </div>
@@ -295,6 +304,12 @@ watch(() => video.value?.url, () => {
 .like-button:hover {
   background: #ffe6e6;
   border-color: #ff0000;
+}
+
+.like-button.liked {
+  background: #ffe6e6;
+  border-color: #ff0000;
+  color: #ff0000;
 }
 
 .video-info {

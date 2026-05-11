@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuth } from '../composables/useAuth.js'
 
 const emit = defineEmits(['category-selected'])
 
@@ -7,8 +8,11 @@ const props = defineProps({
   isOpen: Boolean
 })
 
+const { currentUser } = useAuth()
+
 const categories = ref([
   { icon: '🏠', label: 'Главная' },
+  { icon: '❤️', label: 'Понравившиеся' },
   { icon: '🎵', label: 'Музыка' },
   { icon: '🎮', label: 'Игры' },
   { icon: '📚', label: 'Образование' },

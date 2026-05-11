@@ -1,4 +1,5 @@
 import { ref, onMounted } from 'vue'
+import { useAuth } from './useAuth.js'
 
 const videos = ref([])
 
@@ -135,13 +136,15 @@ const defaultVideos = [
     likes: 2890,
     category: 'Животные',
     description: 'Разбираем странное поведение домашних любимцев.',
-    comments: [      { 
+    comments: [      
+      { 
         id: 501, 
         user: 'Кошка', 
         userColor: '#808080',
         text: 'Мяу.', 
         time: '1 минуту назад' 
-      },   ]
+      }
+    ]
   },
   {
     id: 9,
@@ -197,10 +200,21 @@ function incrementViews(id) {
 
 function toggleLike(id) {
   const video = getVideoById(id)
-  if (video) {
+  if (!video) return false
+
+  const { hasLiked, toggleLike: toggleUserLike } = useAuth()
+
+  const alreadyLiked = hasLiked(id)
+
+  if (alreadyLiked) {
+    video.likes = Math.max(0, video.likes - 1)
+  } else {
     video.likes += 1
-    saveToStorage()
   }
+
+  toggleUserLike(id)
+  saveToStorage()
+  return true
 }
 
 function addVideo(newVideo) {
