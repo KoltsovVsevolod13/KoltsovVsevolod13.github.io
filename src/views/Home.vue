@@ -1,7 +1,7 @@
 <script setup>
 import VideoCard from '../components/VideoCard.vue'
 import { useVideos } from '../composables/useVideos.js'
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   selectedCategory: String

@@ -7,7 +7,6 @@ const router = useRouter()
 const { currentUser, logout } = useAuth()
 
 const search = ref('')
-const emit = defineEmits(['toggle-sidebar'])
 
 const avatarColor = computed(() => {
   if (!currentUser.value) return '#ff5722'
@@ -15,6 +14,12 @@ const avatarColor = computed(() => {
   const hash = currentUser.value.email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
   return colors[hash % colors.length]
 })
+
+const emit = defineEmits(['toggle-sidebar'])
+
+function toggleSidebar() {
+  emit('toggle-sidebar')
+}
 
 function goToLogin() {
   router.push('/login')
@@ -33,8 +38,15 @@ function logoutUser() {
   router.push('/login')
 }
 
-function toggleSidebar() {
-  emit('toggle-sidebar')
+function performSearch() {
+  if (search.value.trim()) {
+    router.push({
+      path: '/search',
+      query: { q: search.value.trim() }
+    })
+  } else {
+    router.push('/search')
+  }
 }
 
 function createVideo() {
@@ -57,9 +69,10 @@ function createVideo() {
         v-model="search"
         class="search"
         type="text"
-        placeholder="Поиск"
+        placeholder="Поиск видео, авторов..."
+        @keyup.enter="performSearch"
       />
-      <button class="search-btn">🔍</button>
+      <button class="search-btn" @click="performSearch">🔍</button>
     </div>
 
     <div class="right">
@@ -147,6 +160,41 @@ function createVideo() {
   background: var(--hover);
 }
 
+.search {
+  flex: 1;
+  padding: 0 16px;
+  height: 40px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid #ccc;
+  border-radius: 20px 0 0 20px;
+  outline: none;
+  font-size: 14px;
+}
+
+.search:focus {
+  border-color: var(--accent);
+}
+
+.search-btn {
+  height: 40px;
+  width: 64px;
+  background: #f2f2f2;
+  color: var(--fg);
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.search-btn:hover {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
 .auth-btn {
   padding: 8px 16px;
   border-radius: 9999px;
@@ -197,47 +245,6 @@ function createVideo() {
   border-color: #aaaaaa;
 }
 
-.plus {
-  font-size: 20px;
-  line-height: 1;
-  font-weight: bold;
-}
-
-.create-text {
-  white-space: nowrap;
-}
-
-.search {
-  flex: 1;
-  padding: 0 16px;
-  height: 40px;
-  background: var(--bg);
-  color: var(--fg);
-  border: 1px solid #ccc;
-  border-radius: 20px 0 0 20px;
-  outline: none;
-  font-size: 14px;
-}
-
-.search:focus {
-  border-color: var(--accent);
-}
-
-.search-btn {
-  height: 40px;
-  width: 64px;
-  background: var(--bg-2);
-  border: 1px solid #ccc;
-  border-left: none;
-  border-radius: 0 20px 20px 0;
-  color: var(--fg);
-  cursor: pointer;
-}
-
-.search-btn:hover {
-  background: var(--hover);
-}
-
 .avatar-btn {
   width: 32px;
   height: 32px;
@@ -263,11 +270,6 @@ function createVideo() {
   }
   .create-btn {
     padding: 8px 12px;
-  }
-  
-  .auth-btn {
-    padding: 7px 14px;
-    font-size: 13px;
   }
 }
 </style>
