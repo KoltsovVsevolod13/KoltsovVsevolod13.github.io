@@ -7,7 +7,7 @@ import VideoCard from '../components/VideoCard.vue'
 
 const router = useRouter()
 const { currentUser, updateUser, logout } = useAuth()
-const { getVideoById } = useVideos()
+const { videos, getVideoById, deleteVideo } = useVideos()
 
 const name = ref(currentUser.value?.name || '')
 const oldPassword = ref('')
@@ -18,11 +18,17 @@ const nameError = ref('')
 const passwordError = ref('')
 const successMessage = ref('')
 
+const showDeleteVideoModal = ref(false)
+const videoToDelete = ref(null)
+
 const avatarColor = computed(() => {
-  if (!currentUser.value) return '#ff5722'
-  const colors = ['#ff0000', '#00bfff', '#32cd32', '#ff8c00', '#8a2be2', '#ff1493']
-  const hash = currentUser.value.email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  return colors[hash % colors.length]
+  return currentUser.value?.avatarColor || '#ff5722'
+})
+
+const myVideos = computed(() => {
+  if (!currentUser.value) return []
+  const userName = currentUser.value.name || currentUser.value.email.split('@')[0]
+  return videos.value.filter(v => v.author === userName)
 })
 
 const watchedVideos = computed(() => {
@@ -70,6 +76,25 @@ function changePassword() {
   confirmNewPassword.value = ''
 }
 
+function openDeleteVideoModal(video) {
+  videoToDelete.value = video
+  showDeleteVideoModal.value = true
+}
+
+function confirmDeleteVideo() {
+  if (videoToDelete.value) {
+    deleteVideo(videoToDelete.value.id)
+    successMessage.value = 'Видео успешно удалено!'
+    setTimeout(() => { successMessage.value = '' }, 2000)
+  }
+  closeDeleteVideoModal()
+}
+
+function closeDeleteVideoModal() {
+  showDeleteVideoModal.value = false
+  videoToDelete.value = null
+}
+
 function logoutUser() {
   logout()
   router.push('/login')
@@ -101,21 +126,9 @@ function logoutUser() {
 
         <div class="section">
           <h2>Изменить пароль</h2>
-          <input 
-            v-model="oldPassword" 
-            type="password" 
-            placeholder="Старый пароль" 
-          />
-          <input 
-            v-model="newPassword" 
-            type="password" 
-            placeholder="Новый пароль" 
-          />
-          <input 
-            v-model="confirmNewPassword" 
-            type="password" 
-            placeholder="Повторите новый пароль" 
-          />
+          <input v-model="oldPassword" type="password" placeholder="Старый пароль" />
+          <input v-model="newPassword" type="password" placeholder="Новый пароль" />
+          <input v-model="confirmNewPassword" type="password" placeholder="Повторите новый пароль" />
           <button @click="changePassword" class="save-btn full-width">Изменить пароль</button>
           <p v-if="passwordError" class="error-text">{{ passwordError }}</p>
         </div>
@@ -125,12 +138,31 @@ function logoutUser() {
         <button @click="logoutUser" class="logout-btn">Выйти из аккаунта</button>
 
         <div class="section">
-          <h2>История просмотров ({{ watchedVideos.length }})</h2>
+          <h2>Мои видео ({{ myVideos.length }})</h2>
           
+          <div v-if="myVideos.length === 0" class="placeholder">
+            Вы ещё не загрузили ни одного видео
+          </div>
+          
+          <div v-else class="my-videos-grid">
+            <div v-for="v in myVideos" :key="v.id" class="my-video-card">
+              <VideoCard
+                :id="v.id"
+                :title="v.title"
+                :poster="v.poster"
+              />
+              <button class="delete-video-btn" @click="openDeleteVideoModal(v)">
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>История просмотров ({{ watchedVideos.length }})</h2>
           <div v-if="watchedVideos.length === 0" class="placeholder">
             Вы ещё не посмотрели ни одного видео
           </div>
-          
           <div v-else class="history-grid">
             <VideoCard
               v-for="v in watchedVideos"
@@ -141,6 +173,17 @@ function logoutUser() {
             />
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="showDeleteVideoModal" class="modal-overlay">
+    <div class="modal">
+      <h3>Удалить видео?</h3>
+      <p>Вы действительно хотите удалить видео «{{ videoToDelete?.title }}»?<br>Это действие нельзя отменить.</p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" @click="closeDeleteVideoModal">Отмена</button>
+        <button class="delete-confirm-btn" @click="confirmDeleteVideo">Удалить</button>
       </div>
     </div>
   </div>
@@ -258,22 +301,82 @@ input:focus {
   margin: 20px 0;
 }
 
-.history-grid {
+.history-grid, .my-videos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
   margin-top: 16px;
 }
 
-@media (max-width: 900px) {
-  .profile-container {
-    max-width: 100%;
-  }
-  .profile-card {
-    padding: 30px 20px;
-  }
-  .history-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
+.my-video-card {
+  position: relative;
+}
+
+.delete-video-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  z-index: 10;
+}
+
+.delete-video-btn:hover {
+  background: #cc0000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg);
+  padding: 28px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal h3 { margin: 0 0 12px 0; }
+.modal p { color: var(--muted); margin-bottom: 24px; }
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.cancel-btn, .delete-confirm-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+}
+
+.cancel-btn {
+  background: var(--hover);
+  color: var(--fg);
+}
+
+.delete-confirm-btn {
+  background: var(--red);
+  color: white;
 }
 </style>

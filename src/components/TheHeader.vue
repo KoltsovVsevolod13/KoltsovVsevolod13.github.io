@@ -9,10 +9,7 @@ const { currentUser, logout } = useAuth()
 const search = ref('')
 
 const avatarColor = computed(() => {
-  if (!currentUser.value) return '#ff5722'
-  const colors = ['#ff0000', '#00bfff', '#32cd32', '#ff8c00', '#8a2be2', '#ff1493']
-  const hash = currentUser.value.email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  return colors[hash % colors.length]
+  return currentUser.value?.avatarColor || '#ff5722'
 })
 
 const emit = defineEmits(['toggle-sidebar'])
@@ -50,7 +47,7 @@ function performSearch() {
 }
 
 function createVideo() {
-  alert('Функция загрузки видео будет добавлена позже')
+  router.push('/upload')
 }
 </script>
 

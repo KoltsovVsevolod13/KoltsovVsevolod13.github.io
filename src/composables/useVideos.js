@@ -1,6 +1,8 @@
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const videos = ref([
+const videos = ref([])
+
+const defaultVideos = [
   {
     id: 1,
     title: '10 интересных фактов про слонов',
@@ -12,8 +14,20 @@ const videos = ref([
     category: 'Животные',
     description: 'Удивительные факты о самых больших наземных животных планеты.',
     comments: [
-      { id: 101, user: 'Алексей', text: 'Очень интересное видео! Особенно про память слонов.', time: '2 часа назад' },
-      { id: 102, user: 'Мария', text: 'Спасибо, теперь знаю, что слоны действительно умеют плавать 😮', time: '1 день назад' }
+      { 
+        id: 101, 
+        user: 'Алексей', 
+        userColor: '#ff0000',
+        text: 'Очень интересное видео! Особенно про память слонов.', 
+        time: '2 часа назад' 
+      },
+      { 
+        id: 102, 
+        user: 'Мария', 
+        userColor: '#00bfff',
+        text: 'Спасибо, теперь знаю, что слоны действительно умеют плавать 😮', 
+        time: '1 день назад' 
+      }
     ]
   },
   {
@@ -38,7 +52,15 @@ const videos = ref([
     likes: 2150,
     category: 'Образование',
     description: 'Методы, которые реально работают.',
-    comments: []
+    comments: [      
+      { 
+        id: 301, 
+        user: 'Андрей', 
+        userColor: '#ff0000',
+        text: 'Я выучил.', 
+        time: '2 часа назад' 
+      },
+    ]
   },
   {
     id: 4,
@@ -62,7 +84,22 @@ const videos = ref([
     likes: 645,
     category: 'Кулинария',
     description: 'Секреты приготовления как в кофейне.',
-    comments: []
+    comments: [      
+      { 
+        id: 501, 
+        user: 'Мама', 
+        userColor: '#ff0000',
+        text: 'Я обожаю кофе.', 
+        time: '2 часа назад' 
+      },      
+      { 
+        id: 601, 
+        user: 'Папа', 
+        userColor: '#008000',
+        text: 'Кофееее.', 
+        time: 'год назад' 
+      },
+    ]
   },
   {
     id: 6,
@@ -98,7 +135,13 @@ const videos = ref([
     likes: 2890,
     category: 'Животные',
     description: 'Разбираем странное поведение домашних любимцев.',
-    comments: []
+    comments: [      { 
+        id: 501, 
+        user: 'Кошка', 
+        userColor: '#808080',
+        text: 'Мяу.', 
+        time: '1 минуту назад' 
+      },   ]
   },
   {
     id: 9,
@@ -123,44 +166,22 @@ const videos = ref([
     category: 'Музыка',
     description: 'Первый урок для начинающих.',
     comments: []
-  },
-  {
-    id: 11,
-    title: 'Как сделать крутой монтаж видео на телефоне',
-    url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4',
-    poster: 'https://picsum.photos/id/160/1280/720',
-    author: 'ВидеоМастер',
-    views: 12400,
-    likes: 780,
-    category: 'Фото и видео',
-    description: 'Бесплатные приложения и приёмы монтажа.',
-    comments: []
-  },
-  {
-    id: 12,
-    title: 'Топ 8 самых умных пород собак',
-    url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4',
-    poster: 'https://picsum.photos/id/237/1280/720',
-    author: 'Познавательный мир',
-    views: 36700,
-    likes: 1120,
-    category: 'Животные',
-    description: 'Какая порода самая умная?',
-    comments: []
-  },
-  {
-    id: 13,
-    title: 'Простые рецепты завтраков на неделю',
-    url: 'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_2MB.mp4',
-    poster: 'https://picsum.photos/id/292/1280/720',
-    author: 'Кухня с душой',
-    views: 19800,
-    likes: 650,
-    category: 'Кулинария',
-    description: 'Вкусные и полезные идеи на каждый день.',
-    comments: []
   }
-])
+]
+
+function loadFromStorage() {
+  const savedVideos = localStorage.getItem('videos')
+  if (savedVideos) {
+    videos.value = JSON.parse(savedVideos)
+  } else {
+    videos.value = [...defaultVideos]
+    saveToStorage()
+  }
+}
+
+function saveToStorage() {
+  localStorage.setItem('videos', JSON.stringify(videos.value))
+}
 
 function getVideoById(id) {
   return videos.value.find(v => v.id === Number(id))
@@ -168,24 +189,38 @@ function getVideoById(id) {
 
 function incrementViews(id) {
   const video = getVideoById(id)
-  if (video) video.views += 1
+  if (video) {
+    video.views += 1
+    saveToStorage()
+  }
 }
 
 function toggleLike(id) {
   const video = getVideoById(id)
-  if (video) video.likes += 1
+  if (video) {
+    video.likes += 1
+    saveToStorage()
+  }
 }
 
-function addComment(videoId, text, userName) {
+function addVideo(newVideo) {
+  videos.value.unshift(newVideo)
+  saveToStorage()
+  return true
+}
+
+function addComment(videoId, text, userName, userColor) {
   const video = getVideoById(videoId)
   if (video && text.trim()) {
     const newComment = {
       id: Date.now(),
       user: userName,
+      userColor: userColor || '#ff0000',
       text: text.trim(),
       time: 'только что'
     }
     video.comments.unshift(newComment)
+    saveToStorage()
     return true
   }
   return false
@@ -195,16 +230,33 @@ function deleteComment(videoId, commentId) {
   const video = getVideoById(videoId)
   if (video) {
     video.comments = video.comments.filter(c => c.id !== commentId)
+    saveToStorage()
   }
 }
 
+function deleteVideo(videoId) {
+  const index = videos.value.findIndex(v => v.id === Number(videoId))
+  if (index !== -1) {
+    videos.value.splice(index, 1)
+    saveToStorage()
+    return true
+  }
+  return false
+}
+
 export function useVideos() {
+  onMounted(() => {
+    loadFromStorage()
+  })
+
   return {
     videos,
     getVideoById,
     incrementViews,
     toggleLike,
+    addVideo,
     addComment,
-    deleteComment
+    deleteComment,
+    deleteVideo,
   }
 }

@@ -6,6 +6,7 @@ import Register from './views/Register.vue'
 import Profile from './views/Profile.vue'
 import Watch from './views/Watch.vue'
 import Search from './views/Search.vue'
+import Upload from './views/Upload.vue'
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: Search
+  },
+  {
+    path: '/upload',
+    name: 'Upload',
+    component: Upload
   }
 ]
 

@@ -20,6 +20,11 @@ function saveToStorage() {
   }
 }
 
+function generateRandomColor() {
+  const hue = Math.floor(Math.random() * 360)
+  return `hsl(${hue}, 85%, 55%)`
+}
+
 export function useAuth() {
   onMounted(() => {
     loadFromStorage()
@@ -38,11 +43,14 @@ export function useAuth() {
   function register(email, password) {
     if (users.value.some(u => u.email === email)) return false
 
+    const avatarColor = generateRandomColor()
+
     const newUser = {
       id: Date.now(),
       email,
       password,
       name: email.split('@')[0],
+      avatarColor: avatarColor,
       watched: [],
       likedVideos: []
     }
