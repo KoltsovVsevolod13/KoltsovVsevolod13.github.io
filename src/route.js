@@ -12,43 +12,66 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: { requiresAuth: false }
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register
+    component: Register,
+    meta: { requiresAuth: false, guestOnly: true }
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/watch/:id',
     name: 'Watch',
-    component: Watch
+    component: Watch,
+    meta: { requiresAuth: false }
   },
   {
     path: '/search',
     name: 'Search',
-    component: Search
+    component: Search,
+    meta: { requiresAuth: false }
   },
   {
     path: '/upload',
     name: 'Upload',
-    component: Upload
+    component: Upload,
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory('/'),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('currentUser') !== null
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login')
+    return
+  }
+
+  if (to.meta.guestOnly && isAuthenticated) {
+    next('/')
+    return
+  }
+
+  next()
 })
 
 export default router
